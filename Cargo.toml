@@ -1,0 +1,6 @@
+[package]
+name = "MutationScan"
+version = "0.1.0"
+authors = ["naupio_zy_huang <naupio_zy_huang@163.com>"]
+
+[dependencies]
