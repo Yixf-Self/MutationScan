@@ -516,5 +516,21 @@ fn run_with_pair(path_str1: &str, path_str2: &str, snp_path: &str, threshold_val
 }
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();    
+    println!("{:?}", args);
+    match args.len() >= 4 {
+        true => {},
+        false => panic!("the length of arguments vec is not bigger than 4"),
+    }
+    let ref r1 = args[1];
+    let ref r2 = args[2];
+    let ref snp = args[3];
+
+    let path_str1 = r1; //  ./R1.fastq";
+    let path_str2 = r2; //  ./R2.fastq";
+    let snp_path = snp; //  ./L858R.txt";
+    let result_vec = run_with_pair(&path_str1, &path_str2, &snp_path, 2, 4);
+    for rv in result_vec {
+        println!("{:?}", rv);
+    }
 }
