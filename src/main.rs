@@ -3,6 +3,7 @@ use std::io::prelude::*;
 use std::fs::File;
 use std::path::Path;
 use std::error::Error;
+use std::env;
 
 #[derive(Debug)]
 struct FastqRecord {
