@@ -527,10 +527,20 @@ fn main() {
     let ref r2 = args[2];
     let ref snp = args[3];
 
+    let mut threshold_value:usize = 2;
+    let mut fusion_num:usize = 4;
+    if args.len() == 5 {
+        threshold_value = args[4].clone().trim().parse().expect("Please type a number!");
+    }
+    else if args.len() == 6 {
+        threshold_value = args[4].clone().trim().parse().expect("Please type a number!");
+        fusion_num = args[5].clone().trim().parse().expect("Please type a number!");
+    };
+
     let path_str1 = r1; //  ./R1.fastq";
     let path_str2 = r2; //  ./R2.fastq";
     let snp_path = snp; //  ./L858R.txt";
-    let result_vec = run_with_pair(&path_str1, &path_str2, &snp_path, 2, 4);
+    let result_vec = run_with_pair(&path_str1, &path_str2, &snp_path, threshold_value, fusion_num);
     for rv in result_vec {
         println!("{:?}", rv);
     }
