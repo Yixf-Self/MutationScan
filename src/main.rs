@@ -453,11 +453,8 @@ fn run_with_one(path_str: &str, snp_path: &str, threshold_value: usize) -> Vec<S
     result_vec
 }
 
-fn run_with_pair(path_str1: &str, path_str2: &str, snp_path: &str, threshold_value: usize, fusion_num: usize) -> Vec<SnpResult> {
-    let (r1_vec,r2_vec) = read_fastq_pair(path_str1, path_str2);
+fn run_with_pair_vec(r1_vec: Vec<FastqRecord>, r2_vec: Vec<FastqRecord>, snp_vec: Vec<SnpRecord>, threshold_value: usize, fusion_num: usize) -> Vec<SnpResult> {
     let mut result_vec: Vec<SnpResult> = vec![];
-    let snp_vec = read_snp_file(snp_path);
-
     for snp in snp_vec {
         let mut r1_vec_iter = r1_vec.iter();
         let mut r2_vec_iter = r2_vec.iter();
@@ -514,6 +511,13 @@ fn run_with_pair(path_str1: &str, path_str2: &str, snp_path: &str, threshold_val
         }
     }
     result_vec
+}
+
+fn run_with_pair(path_str1: &str, path_str2: &str, snp_path: &str, threshold_value: usize, fusion_num: usize) -> Vec<SnpResult> {
+    let (r1_vec,r2_vec) = read_fastq_pair(path_str1, path_str2);
+    let snp_vec = read_snp_file(snp_path);
+
+    run_with_pair_vec(r1_vec, r2_vec, snp_vec, threshold_value, fusion_num)
 }
 
 fn main() {
