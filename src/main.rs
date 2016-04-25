@@ -393,21 +393,32 @@ impl SnpResult {
     }
 }
 
-fn search_snp(it: &FastqRecord, snp: &SnpRecord, threshold_value: usize) -> (bool, SnpResult) {
+fn search_snp(it: &FastqRecord, snp: &SnpRecord, threshold_value: usize) -> (bool, SnpResult, usize) {
     let len1 = it.seq.len();
     let len2 = snp.seq.len();
     //if(len1 <= len2) {continue;}
     //println!("len1 = {:?}, len2 = {:?}", len1, len2);
     let mut ed_dis: usize = len1+len2;
+    let mut min_edis_index: usize = 0;
     for i in 0..len1-len2+1 {
         let temp_dis = edit_distance(&it.seq[i..i+len2], &snp.seq);
         //println!("{:?}\n", temp_dis);
-        if temp_dis <= ed_dis {ed_dis = temp_dis;}
+        if temp_dis <= ed_dis { ed_dis = temp_dis; min_edis_index = i;}
         else {continue;}
     }
 
+    let label_vec: Vec<_> = snp.label.split(' ').collect();
+    let vlen = label_vec.len();
+    let mut flag = true;
+    for i in 1..vlen {
+        let idx = label_vec[i].trim().parse::<usize>().expect("please type a number. (in snp file)");
+        if (it.seq.clone()[min_edis_index..min_edis_index+len2].chars().nth(idx) != snp.seq.clone().chars().nth(idx)) {
+            flag = false;
+            break;
+        }
+    }
+
     if(ed_dis <= threshold_value) {
-        println!("edit_distance => {:?}\n", ed_dis);
         let snp_rs = SnpResult {
             snp_label: snp.label.clone(),
             snp_seq: snp.seq.clone(),
@@ -415,12 +426,21 @@ fn search_snp(it: &FastqRecord, snp: &SnpRecord, threshold_value: usize) -> (boo
             fastq_seq: it.seq.clone(),
             fastq_qual: it.qual.clone(),
         };
-        println!("{:?}\n", snp_rs);
-        (true, snp_rs)
+        if(flag == true) {
+            println!("edit_distance => {:?}\n", ed_dis);
+            //println!("flag is true");
+            println!("{:?}\n", snp_rs);
+            (true, snp_rs, min_edis_index)
+        }
+        else {
+            let snp_rs = SnpResult::init(); 
+            //println!("flag is false");
+            (false, snp_rs, 0) 
+        }
     }
     else {
         let snp_rs = SnpResult::init(); 
-        (false, snp_rs) 
+        (false, snp_rs, 0) 
     }
 }
 
@@ -437,7 +457,7 @@ fn run_with_one(path_str: &str, snp_path: &str, threshold_value: usize) -> Vec<S
                     let len1 = it.seq.len();
                     let len2 = snp.seq.len();
                     if(len1 <= len2) {continue;}
-                    let (flag, snp_rs) = search_snp(&it, &snp, threshold_value);
+                    let (flag, snp_rs, min_edis_index) = search_snp(&it, &snp, threshold_value);
                     if flag{
                         result_vec.push(snp_rs);
                     }
@@ -475,7 +495,7 @@ fn run_with_pair_vec(r1_vec: Vec<FastqRecord>, r2_vec: Vec<FastqRecord>, snp_vec
                             let len2 = snp.seq.len();
                             if(len1 <= len2) {continue;}
 
-                            let (flag, snp_rs) = search_snp(&it, &snp, threshold_value);
+                            let (flag, snp_rs, min_edis_index) = search_snp(&it, &snp, threshold_value);
                             if flag{
                                 result_vec.push(snp_rs);
                             }
@@ -490,8 +510,8 @@ fn run_with_pair_vec(r1_vec: Vec<FastqRecord>, r2_vec: Vec<FastqRecord>, snp_vec
 
                             if(len1 <= len2){continue;}
                             if(len3 <= len2){continue;}
-                            let (flag1, snp_rs1) = search_snp(&it1, &snp, threshold_value);
-                            let (flag2, snp_rs2) = search_snp(&it2, &snp, threshold_value);
+                            let (flag1, snp_rs1, min_edis_index1) = search_snp(&it1, &snp, threshold_value);
+                            let (flag2, snp_rs2, min_edis_index2) = search_snp(&it2, &snp, threshold_value);
                             //println!("{:?}======{:?}",flag1,flag2 );
                             match flag1 {
                                 true => result_vec.push(snp_rs1),
@@ -524,28 +544,51 @@ fn main() {
     let args: Vec<String> = env::args().collect();    
     println!("{:?}", args);
     match args.len() >= 4 {
-        true => {},
-        false => panic!("the length of arguments vec is not bigger than 4"),
-    }
-    let ref r1 = args[1];
-    let ref r2 = args[2];
-    let ref snp = args[3];
+        true => {
+            match args[3].clone().trim().parse::<usize>() {
+                Ok(t_v) => {
+                    let ref r0 = args[1];
+                    let ref snp = args[2];
+                    let threshold_value = t_v;
+                    println!("start run_with_one function with threshold_value => {}", t_v);
+                    run_with_one(&r0, &snp, threshold_value);
+                },
+                Err(_) => {
+                    let ref r1 = args[1];
+                    let ref r2 = args[2];
+                    let ref snp = args[3];
+                    let mut threshold_value:usize = 2;
+                    let mut fusion_num:usize = 4;
+                    if args.len() == 5 {
+                        threshold_value = args[4].clone().trim().parse().expect("Please type a number!");
+                    }
+                    else if args.len() == 6 {
+                        threshold_value = args[4].clone().trim().parse().expect("Please type a number!");
+                        fusion_num = args[5].clone().trim().parse().expect("Please type a number!");
+                    };
 
-    let mut threshold_value:usize = 2;
-    let mut fusion_num:usize = 4;
-    if args.len() == 5 {
-        threshold_value = args[4].clone().trim().parse().expect("Please type a number!");
-    }
-    else if args.len() == 6 {
-        threshold_value = args[4].clone().trim().parse().expect("Please type a number!");
-        fusion_num = args[5].clone().trim().parse().expect("Please type a number!");
-    };
+                    println!("start run_with_pair function with threshold_value => {}, fusion_num => {}", threshold_value, fusion_num);
+                    let path_str1 = r1; //  ./R1.fastq";
+                    let path_str2 = r2; //  ./R2.fastq";
+                    let snp_path = snp; //  ./L858R.txt";
+                    let result_vec = run_with_pair(&path_str1, &path_str2, &snp_path, threshold_value, fusion_num);
+                    for rv in result_vec {
+                        println!("{:?}", rv);
+                    }  
+                },
+            }
 
-    let path_str1 = r1; //  ./R1.fastq";
-    let path_str2 = r2; //  ./R2.fastq";
-    let snp_path = snp; //  ./L858R.txt";
-    let result_vec = run_with_pair(&path_str1, &path_str2, &snp_path, threshold_value, fusion_num);
-    for rv in result_vec {
-        println!("{:?}", rv);
+
+        },
+        false => match args.len() == 3 {
+            true => {
+                println!("start run_with_one function with threshold_value => 2:");
+                let ref r0 = args[1];
+                let ref snp = args[2];
+                let threshold_value = 2;
+                run_with_one(&r0, &snp, threshold_value);
+            },
+            false => panic!("the length of arguments vec is not bigger than 3"),
+        },
     }
 }
