@@ -31,13 +31,13 @@ The second line is `ATCG` sequence
 ps: If you have more than one mutations in the sequence, your snp header label can be set like `T790M(0) 25 27 40`.
 
 ## Examples
-1. Run with pair-end fastq files(R1.fastq and R2.fastq).
+***1. Run with pair-end fastq files(R1.fastq and R2.fastq).***
 
 **`MutationScan r1_file_path r2_file_path snpfile_path [threshold_value] [fusion_num]`**
 
 `./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq snpfile` 
 
-Set threshold_value = 2, fusion_num =4 by default.
+threshold_value = 2, fusion_num =4 by default.
 
 `./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq snpfile 3`
 
@@ -45,12 +45,12 @@ Set threshold_value = 2, fusion_num =4 by default.
 
 ps: On Windows, you must add .exe with `MutationScan`
 
-2. Run with one fastq file(R.fastq).
+***2. Run with one fastq file(R.fastq).***
 
 **`MutationScan r_file_path snpfile_path [threshold_value]`**
 
 `./MutationScan/target/release/MutationScan R.fastq snpfile` 
 
-Set threshold_value = 2 by default.
+threshold_value = 2 by default.
 
 `./MutationScan/target/release/MutationScan R.fastq snpfile 3`
