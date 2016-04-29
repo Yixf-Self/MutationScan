@@ -35,13 +35,13 @@ ps: If you have more than one mutations in the sequence, your snp header label c
 
 **`MutationScan r1_file_path r2_file_path snpfile_path [threshold_value] [fusion_num]`**
 
-`./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq snpfile` 
+`./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq ./snpfile` 
 
 threshold_value = 2, fusion_num =4 by default.
 
-`./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq snpfile 3`
+`./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq ./snpfile 3`
 
-`./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq snpfile 3 6`
+`./MutationScan/target/release/MutationScan ./R1.fastq ./R2.fastq ./snpfile 3 6`
 
 ps: On Windows, you must add .exe with `MutationScan`
 
@@ -49,8 +49,8 @@ ps: On Windows, you must add .exe with `MutationScan`
 
 **`MutationScan r_file_path snpfile_path [threshold_value]`**
 
-`./MutationScan/target/release/MutationScan R.fastq snpfile` 
+`./MutationScan/target/release/MutationScan R.fastq ./snpfile` 
 
 threshold_value = 2 by default.
 
-`./MutationScan/target/release/MutationScan R.fastq snpfile 3`
+`./MutationScan/target/release/MutationScan R.fastq ./snpfile 3`
