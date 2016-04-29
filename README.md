@@ -1,5 +1,5 @@
 ## MutationScan
-MutationScan is a project implemented by pure Rust language for searching Muatation point directly in fastq files (support single-end or pair-end)
+MutationScan is a project implemented by pure Rust language for searching mutation point(s) directly in fastq files (support single-end or pair-end)
 
 ## Install
 > 1. Clone this project. 
@@ -14,9 +14,9 @@ On Windows, download and run the [rustup-init.exe for the i686-pc-windows-gnu ta
 4. Build the project.  
 `cd MutationScan`  
 `cargo build --release`  
-**PS: Ingore the built Warning**
+**PS: Ignore the building warning(s)**
 
-## Config
+## Configure
 1. Prepare the fastq file(s).
 2. Set snpfile.
 ```
