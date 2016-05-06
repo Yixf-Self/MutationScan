@@ -24,14 +24,7 @@ impl FastqRecord {
 
 fn read_fastq_one(path_str: &str) -> Vec<FastqRecord> {
     let path = Path::new(path_str);
-    //let path = Path::new(r"C:\Users\naupio\Desktop\mywork\testread.txt");
     let display = path.display();
-    //let new_path = path.join("L858R.txt");
-
-    //match path.to_str() {
-    //    Some(s) => println!("{:?}", s),
-    //    None => {},
-    //}
 
     let mut file = match File::open(&path) {
         // The `description` method of `io::Error` returns a string that
@@ -54,8 +47,6 @@ fn read_fastq_one(path_str: &str) -> Vec<FastqRecord> {
     let mut fq_rd_vec:Vec<FastqRecord> = vec![];
 
     loop{
-        //if cnt <= 4 {cnt += 1;}
-        //else { cnt = 0; fq_rd = FastqRecord::init(); break;}
         match iter.next() {
             Some(it) => {
                 match ( cnt % 4) {
@@ -76,7 +67,6 @@ fn read_fastq_one(path_str: &str) -> Vec<FastqRecord> {
             fq_rd = FastqRecord::init();
             //break;
         }
-
         //if cnt > 500 {println!("the line in read_fastq_one function havn't comment!"); break;}
         cnt += 1;
     }
@@ -261,7 +251,6 @@ fn overlap(r1_str: &str, r2_str: &str) ->(usize, usize) {
         false => {return (0, 0)},
     }
     //println!("{:?}", pop_string(r1_string,r1_str.len()-1));
-
     //println!("start:");
     
     let mut flag = 0;
@@ -286,7 +275,7 @@ fn overlap(r1_str: &str, r2_str: &str) ->(usize, usize) {
         }
 
     }
-    //println!("end!!");
+    //println!("end!");
     //println!("{:?}", (flag, score) );
     (flag, score)
 }
@@ -324,7 +313,6 @@ fn is_similar(s1: &str, s2: &str)-> (bool, usize, usize) {
                 else{
                     flag = 0;break;    
                 }
-                
             }
         else {
             match next_s1ch {
@@ -396,10 +384,9 @@ impl SnpResult {
 fn search_snp(it: &FastqRecord, snp: &SnpRecord, threshold_value: usize) -> (bool, SnpResult, usize) {
     let len1 = it.seq.len();
     let len2 = snp.seq.len();
-    //if(len1 <= len2) {continue;}
-    //println!("len1 = {:?}, len2 = {:?}", len1, len2);
     let mut ed_dis: usize = len1+len2;
     let mut min_edis_index: usize = 0;
+    
     for i in 0..len1-len2+1 {
         let temp_dis = edit_distance(&it.seq[i..i+len2], &snp.seq);
         //println!("{:?}\n", temp_dis);
